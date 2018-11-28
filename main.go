@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"godemo/download"
+	"time"
 )
 
 const (
@@ -70,6 +71,7 @@ func main() {
 }*/
 
 func producer(c chan string, cache []string) {
+	fmt.Print(time.Now())
 	defer close(c) // 关闭channel
 	for _, v := range cache {
 		fmt.Print(v)
@@ -90,4 +92,5 @@ func consumer(c chan string, f chan int) {
 		}
 	}
 	f <- 1 //发送数据，通知main函数已接受完成
+	fmt.Print(time.Now())
 }
