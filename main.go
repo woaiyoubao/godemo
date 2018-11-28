@@ -1,17 +1,15 @@
 package main
 
 import (
-	"github.com/gocolly/colly"
 	"fmt"
-	"spider/download"
+	"github.com/gocolly/colly"
+	"godemo/download"
 )
 
-const(
-	URL = "http://www.quanjing.com/"
+const (
+	URL      = "http://www.quanjing.com/"
 	savePath = "E://temp//"
 )
-
-
 
 func main() {
 
@@ -22,7 +20,7 @@ func main() {
 	// Instantiate default collector
 	c := colly.NewCollector(
 		// Visit only domains: hackerspaces.org, wiki.hackerspaces.org
-		colly.AllowedDomains("hackerspaces.org", "wiki.hackerspaces.org","www.quanjing.com"),
+		colly.AllowedDomains("hackerspaces.org", "wiki.hackerspaces.org", "www.quanjing.com"),
 	)
 
 	// On every a element which has href attribute call callback
@@ -41,7 +39,6 @@ func main() {
 
 	})
 
-
 	// Before making a request print "Visiting ..."
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL.String())
@@ -50,7 +47,7 @@ func main() {
 	// Start scraping on https://hackerspaces.org
 	c.Visit("http://www.quanjing.com/")
 
-	go producer(buf,cache)
+	go producer(buf, cache)
 	go consumer(buf, flg)
 	<-flg
 }
@@ -72,9 +69,9 @@ func main() {
 
 }*/
 
-func producer(c chan string, cache []string){
+func producer(c chan string, cache []string) {
 	defer close(c) // 关闭channel
-	for _,v:= range cache{
+	for _, v := range cache {
 		fmt.Print(v)
 		c <- v
 	}
@@ -83,14 +80,14 @@ func producer(c chan string, cache []string){
 	}*/
 }
 
-func consumer(c chan string, f chan int){
-	for{
-		if v, ok := <-c; ok{
+func consumer(c chan string, f chan int) {
+	for {
+		if v, ok := <-c; ok {
 			fmt.Print(v) // 阻塞，直到生产者放入数据后继续读取数据
-			download.GetImg3(v);
-		}else{
+			download.GetImg3(v)
+		} else {
 			break
 		}
 	}
-	f<-1//发送数据，通知main函数已接受完成
+	f <- 1 //发送数据，通知main函数已接受完成
 }
